@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  Button,
   Alert,
   Text,
   TouchableOpacity,
@@ -28,9 +27,35 @@ export const FormScreen = ({navigation}: Props) => {
     n: 0,
     phrase: '',
   });
+  const showAlert = (message: string, title: string) => {
+    Alert.alert(
+      title,
+      message,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'destructive',
+        },
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]
+    );
+  };
   const handleLogic = () => {
     const {n, phrase} = form;
-    //TODO CHECK VALUES
+    //Checking form values
+    const chain = phrase
+      .replace(/[^\w\s]|_/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .split(' ');
+    if ((!n && n <= 0) || n > chain.length) {
+      showAlert( constants.form.alerts.nError.message,constants.form.alerts.nError.title);
+      return;
+    }
+    if (!phrase) {
+      showAlert( constants.form.alerts.phraseError.message,constants.form.alerts.phraseError.message);
+      return;
+    }
     const ngrams = main_function_n_grams(n, phrase);
     navigation.navigate('Result', ngrams);
   };
@@ -56,14 +81,14 @@ export const FormScreen = ({navigation}: Props) => {
             <TextInput
               multiline
               numberOfLines={4}
-              style={stylesScreen.inputStyle}
+              style={[stylesScreen.inputStyle,stylesScreen.inputTextArea]}
               placeholder={constants.form.placeholderPhrase}
               onChangeText={value => onChange(value, 'phrase')}
             />
             <TouchableOpacity style={stylesScreen.button} onPress={handleLogic}>
               <Text style={stylesScreen.btnText}>{constants.form.button}</Text>
             </TouchableOpacity>
-            <View style={{height: 100}} />
+            <View style={stylesScreen.keyboardHeight} />
           </View>
         </TouchableWithoutFeedback>
       </ScrollView>
@@ -78,6 +103,9 @@ const stylesScreen = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 10,
     marginVertical: 20,
+  },
+  inputTextArea:{
+      height:100
   },
   button: {
     marginTop: 20,
@@ -95,4 +123,5 @@ const stylesScreen = StyleSheet.create({
     color: 'green',
     fontWeight: 'bold',
   },
+  keyboardHeight: {height: 100},
 });

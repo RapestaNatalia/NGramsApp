@@ -7,6 +7,16 @@ export const constants = {
     title: 'N-Gram Form',
     nSubtitle: 'N',
     phraseSubtitle: 'Phrase',
+    alerts:{
+      nError:{
+        title:'N Error',
+        message:'Check N is between 1 and the phrase length.'
+      },
+      phraseError:{
+        title:'Phrase Error',
+        message:'Check phrase has at least a word.'
+      }
+    }
   },
   listNGrams: {
     title: 'List of N-Grams',

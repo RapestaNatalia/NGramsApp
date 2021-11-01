@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {styles} from '../theme/appTheme';
 import {constants} from '../constants/constants';
@@ -10,16 +10,33 @@ import {RootStackParams} from '../navigation/Navigator';
 
 interface Props extends NativeStackScreenProps<RootStackParams, 'Result'> {}
 
-export const ResultScreen = ({route}: any) => {
+export const ResultScreen = ({route}: Props) => {
   const ngrams = route.params;
-
+  const renderItem = useCallback(
+    ({item}) => <BaseFlatListItem listItem={item} />,
+    [],
+  );
+  const keyExtractor = useCallback(
+    (item,index) => item+'-'+index,
+    [],
+  );
+  const ITEM_HEIGTH = 100;
+  const getItemLayout = useCallback(
+    (data,index) => ({
+      length:ITEM_HEIGTH,
+      offset: ITEM_HEIGTH * index,
+      index
+    }),
+    []
+  )
   return (
     <View style={stylesScreen.mainScreen}>
       <FlatList
         testID="result-n-grams"
         data={ngrams}
-        renderItem={({item}) => <BaseFlatListItem listItem={item} />}
-        keyExtractor={item => item}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
         ListHeaderComponent={() => (
           <BaseHeaderTitle title={constants.listNGrams.title} />
         )}
@@ -31,6 +48,7 @@ export const ResultScreen = ({route}: any) => {
             </Text>
           );
         }}
+        maxToRenderPerBatch={20}
       />
     </View>
   );
